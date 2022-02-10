@@ -21,18 +21,28 @@ public class ContactController {
     public final ContactService contactService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Contact>>> getContacts() {
-         List<Contact> contacts = contactService.getContacts();
-         log.info("get all contacts");
+    public ResponseEntity<ApiResponse<List<Contact>>> getContacts(@RequestParam(required = false) String keyword) {
 
-         ApiResponse<List<Contact>> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
-                        "All contacts", contacts);
+        List<Contact> contacts = contactService.getContacts(keyword);
+
+        String message;
+        if (keyword != null) {
+            log.info("search conducted");
+            message = "Contact search results";
+        } else {
+            log.info("get all contacts");
+            message = "All contacts";
+        }
+
+        ApiResponse<List<Contact>> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
+                message, contacts);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ApiResponse<Contact>> addNewContact(@Validated(OnInsert.class) @RequestBody Contact contact) {
         Contact savedContact = contactService.addContact(contact);
+        log.info("add new contact");
 
         ApiResponse<Contact> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
                 "Contact added successfully", savedContact);
@@ -42,9 +52,10 @@ public class ContactController {
     }
 
     @DeleteMapping(path = "{contactId}")
-    public ResponseEntity<ApiResponse<?>> deleteContact(@PathVariable("contactId") Long contactId){
+    public ResponseEntity<ApiResponse<?>> deleteContact(@PathVariable("contactId") Long contactId) {
 
         contactService.deleteContact(contactId);
+        log.info("delete contact");
 
         ApiResponse<Object> apiResponse = new ApiResponse<>(
                 true, HttpStatus.OK,
@@ -58,6 +69,7 @@ public class ContactController {
                                                               @Validated(OnUpdate.class) @RequestBody(required = false) Contact contact) {
 
         Contact updatedContact = contactService.updateContact(contactId, contact);
+        log.info("update contact");
 
         ApiResponse<Contact> apiResponse = new ApiResponse<>(
                 true, HttpStatus.OK,
@@ -65,4 +77,5 @@ public class ContactController {
 
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
+
 }

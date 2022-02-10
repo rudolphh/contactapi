@@ -14,23 +14,24 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Service
 @Log4j2
-public class ContactServiceImpl implements ContactService{
+public class ContactServiceImpl implements ContactService {
 
     private final ContactRepository contactRepository;
 
     @Override
-    public List<Contact> getContacts() {
+    public List<Contact> getContacts(String keyword) {
+        if (keyword != null) {
+            return contactRepository.search(keyword);
+        }
         return contactRepository.findAll();
     }
 
     @Override
-    public Contact addContact(Contact contact){
+    public Contact addContact(Contact contact) {
         Optional<Contact> contactEmail = contactRepository.findContactByEmail(contact.getEmail());
 
-        if(contactEmail.isPresent()){
-            log.info(contactEmail.get());
-        }
-        if(contactEmail.isPresent()) {
+        contactEmail.ifPresent(log::info);
+        if (contactEmail.isPresent()) {
             throw new IllegalStateException("email already taken");
         }
         return contactRepository.save(contact);
@@ -40,7 +41,7 @@ public class ContactServiceImpl implements ContactService{
     public void deleteContact(Long contactId) {
         boolean exists = contactRepository.existsById(contactId);
         log.info(exists);
-        if(!exists){
+        if (!exists) {
             throw new ContactNotFoundException("Contact with id: " + contactId + " does not exist");
         }
         contactRepository.deleteById(contactId);
@@ -59,16 +60,16 @@ public class ContactServiceImpl implements ContactService{
         String lastName = contact.getLastName();
         String email = contact.getEmail();
 
-        if(firstName != null && !firstName.isEmpty() && !Objects.equals(firstName, currentContact.getFirstName())){
+        if (firstName != null && !firstName.isEmpty() && !Objects.equals(firstName, currentContact.getFirstName())) {
             currentContact.setFirstName(firstName);
         }
 
-        if(lastName != null && !lastName.isEmpty() && !Objects.equals(lastName, currentContact.getLastName())){
+        if (lastName != null && !lastName.isEmpty() && !Objects.equals(lastName, currentContact.getLastName())) {
             currentContact.setLastName(lastName);
         }
 
-        if(email != null && !email.isEmpty() && !Objects.equals(email, currentContact.getEmail())){
-            if(contactRepository.existsByEmail(email)){
+        if (email != null && !email.isEmpty() && !Objects.equals(email, currentContact.getEmail())) {
+            if (contactRepository.existsByEmail(email)) {
                 throw new EmailExistsException("Email already exists");
             }
             currentContact.setEmail(email);
@@ -76,4 +77,5 @@ public class ContactServiceImpl implements ContactService{
 
         return currentContact;
     }
+
 }
