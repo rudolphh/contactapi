@@ -15,6 +15,11 @@ public interface ContactRepository extends JpaRepository<Contact, Long> {
 
     boolean existsByEmail(String email);
 
+//    @Query("SELECT c FROM Contact c WHERE c.firstName LIKE %?1%"
+//            + " OR c.lastName LIKE %?1%"
+//            + " OR c.email LIKE %?1%")
+
     @Query("SELECT c FROM Contact c WHERE CONCAT(c.firstName, ' ', c.lastName, ' ', c.email) LIKE %?1%")
+
     List<Contact> search(String keyword);
 }

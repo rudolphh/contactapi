@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/api/v1/contacts")
@@ -36,6 +37,16 @@ public class ContactController {
 
         ApiResponse<List<Contact>> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
                 message, contacts);
+        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+    }
+
+    @GetMapping(path = "{contactId}")
+    public ResponseEntity<ApiResponse<Contact>> getContact(@PathVariable("contactId") Long contactId) {
+
+        Contact contact = contactService.getContactById(contactId);
+
+        ApiResponse<Contact> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
+                "Contact with id: " + contactId + " returned", contact);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
 

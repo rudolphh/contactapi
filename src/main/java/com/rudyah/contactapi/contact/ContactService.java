@@ -10,4 +10,6 @@ public interface ContactService {
     void deleteContact(Long contactId);
 
     Contact updateContact(Long contactId, Contact contact);
+
+    Contact getContactById(Long contactId);
 }

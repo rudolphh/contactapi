@@ -78,4 +78,13 @@ public class ContactServiceImpl implements ContactService {
         return currentContact;
     }
 
+    @Override
+    public Contact getContactById(Long contactId) {
+        Optional<Contact> contactById= contactRepository.findById(contactId);
+        if (contactById.isEmpty()) {
+            throw new ContactNotFoundException("Contact with id: " + contactId + " does not exist");
+        }
+        return contactById.get();
+    }
+
 }
