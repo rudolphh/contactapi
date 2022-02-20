@@ -9,7 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -58,7 +60,10 @@ public class ContactController {
         ApiResponse<Contact> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
                 "Contact added successfully", savedContact);
 
-        return new ResponseEntity<>(apiResponse, HttpStatus.OK);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
+                .buildAndExpand(savedContact.getId()).toUri();
+        return ResponseEntity.created(location).body(apiResponse);
+        //new ResponseEntity<>(apiResponse, HttpStatus.OK);
 
     }
 
