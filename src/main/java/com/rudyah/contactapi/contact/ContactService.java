@@ -3,7 +3,7 @@ package com.rudyah.contactapi.contact;
 import java.util.List;
 
 public interface ContactService {
-    List<Contact> getContacts(String keyword);
+    List<ContactData> getContacts(String keyword);
 
     Contact addContact(Contact contact);
 

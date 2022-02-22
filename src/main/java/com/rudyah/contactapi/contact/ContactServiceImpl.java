@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -17,13 +18,17 @@ import java.util.Optional;
 public class ContactServiceImpl implements ContactService {
 
     private final ContactRepository contactRepository;
+    private final ContactEntityConverter contactEntityConverter;
 
     @Override
-    public List<Contact> getContacts(String keyword) {
+    public List<ContactData> getContacts(String keyword) {
+        List<Contact> contacts;
         if (keyword != null) {
-            return contactRepository.search(keyword);
+            contacts = contactRepository.search(keyword);
+        } else {
+            contacts = contactRepository.findAll();
         }
-        return contactRepository.findAll();
+        return contacts.stream().map(contactEntityConverter::toResponse).collect(Collectors.toList());
     }
 
     @Override
@@ -32,7 +37,7 @@ public class ContactServiceImpl implements ContactService {
 
         contactEmail.ifPresent(log::info);
         if (contactEmail.isPresent()) {
-            throw new IllegalStateException("email already taken");
+            throw new EmailExistsException("Email already exists");
         }
         return contactRepository.save(contact);
     }

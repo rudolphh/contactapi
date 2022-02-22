@@ -15,11 +15,12 @@ import static org.mockito.Mockito.verify;
 class ContactServiceTest {
 
     @Mock private ContactRepository contactRepository;
+    @Mock private ContactEntityConverter contactEntityConverter;
     private ContactServiceImpl underTest;
 
     @BeforeEach
     void setup() {
-        underTest = new ContactServiceImpl(contactRepository);
+        underTest = new ContactServiceImpl(contactRepository, contactEntityConverter);
     }
 
     @Test

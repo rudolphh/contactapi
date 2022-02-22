@@ -24,9 +24,9 @@ public class ContactController {
     public final ContactService contactService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Contact>>> getContacts(@RequestParam(required = false) String keyword) {
+    public ResponseEntity<ApiResponse<List<ContactData>>> getContacts(@RequestParam(required = false) String keyword) {
 
-        List<Contact> contacts = contactService.getContacts(keyword);
+        List<ContactData> contacts = contactService.getContacts(keyword);
 
         String message;
         if (keyword != null) {
@@ -37,7 +37,7 @@ public class ContactController {
             message = "All contacts";
         }
 
-        ApiResponse<List<Contact>> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
+        ApiResponse<List<ContactData>> apiResponse = new ApiResponse<>(true, HttpStatus.OK,
                 message, contacts);
         return new ResponseEntity<>(apiResponse, HttpStatus.OK);
     }
