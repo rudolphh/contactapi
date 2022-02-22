@@ -11,8 +11,7 @@ import javax.validation.constraints.Size;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Setter
-@Getter
+@Getter @Setter
 @ToString
 @Entity
 @Table(name = "contacts")
